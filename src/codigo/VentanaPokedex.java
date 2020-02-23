@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -30,6 +31,8 @@ public class VentanaPokedex extends javax.swing.JFrame {
     ResultSet resultadoConsulta;
     Connection conexion;
     
+    //declaro el hashmap
+    HashMap<String, Pokemon> pokemonList = new HashMap();
     
     @Override
     public void paint(Graphics g){
@@ -54,16 +57,25 @@ public class VentanaPokedex extends javax.swing.JFrame {
         buffer1 = (BufferedImage) imagenPokemon.createImage(
                 imagenPokemon.getWidth(),
                 imagenPokemon.getHeight());
-        
-        
-        
-        try{
+        try{//creamos hashmap donde guardar la base de datos entera
             Class.forName("com.mysql.jdbc.Driver");
-            conexion = DriverManager
-                    .getConnection("jdbc:mysql://127.0.0.1/newpokemon",
-                            "root",
-                            "");
+            conexion = DriverManager.getConnection("jdbc:mysql://127.0.0.1/newpokemon","root","");
             estado = conexion.createStatement();
+            resultadoConsulta = estado.executeQuery("Select * From pokemon");
+            while (resultadoConsulta.next()) {
+                Pokemon p = new Pokemon();
+                p.nombre = resultadoConsulta.getString(2);
+                p.num = resultadoConsulta.getString(1);
+                p.altura = resultadoConsulta.getString(3);
+                p.peso = resultadoConsulta.getString(4);
+                p.tipo = resultadoConsulta.getString(7) + (!"".equals(resultadoConsulta.getString(8)) ? (" / " + resultadoConsulta.getString(8)) : "");
+                p.habitat = resultadoConsulta.getString(6);
+                p.especie = resultadoConsulta.getString(5);
+                
+                pokemonList.put(resultadoConsulta.getString(1), p);
+                
+            }
+            
         }
         catch (ClassNotFoundException | SQLException e){
             System.out.println(e.getMessage());
@@ -72,22 +84,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
         
         dibujaElPokemonQueEstaEnLaPosicion(0);
         
-        try {
-            resultadoConsulta = estado.executeQuery("select * from pokemon where id= 1");
-            if (resultadoConsulta.next()){
-                nombre.setText("Nombre: " + resultadoConsulta.getString(2));
-                num.setText("Nº en la pokedex: " + resultadoConsulta.getString(1));
-                altura.setText("Mide " + resultadoConsulta.getString(3) + " m");
-                peso.setText("Pesa " + resultadoConsulta.getString(4) + "Kg");
-                tipo.setText("Tipo: " + resultadoConsulta.getString(7) + (!"".equals(resultadoConsulta.getString(8)) ? (" / " + resultadoConsulta.getString(8)) : ""));
-                habitat.setText("Habitat: " + resultadoConsulta.getString(6));
-                especie.setText("Especie: " + resultadoConsulta.getString(5));
-            }else{
-                nombre.setText("Este pokemon no figura en la pokedex");
-            }
-        } catch (SQLException ex) {
-                Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        dump(1);
     }
 
     private void dibujaElPokemonQueEstaEnLaPosicion(int posicion){
@@ -113,7 +110,18 @@ public class VentanaPokedex extends javax.swing.JFrame {
         
     }
     
-    
+    private void dump (int num){
+        Pokemon p = pokemonList.get(String.valueOf(num));
+        if (p != null){
+            nombre.setText("Nombre: " + p.nombre);
+            this.num.setText("Nº en la pokedex: " + p.num);
+            altura.setText("Mide: " + p.altura);
+            peso.setText("Pesa: " + p.peso);
+            tipo.setText("Tipo: " + p.tipo);
+            habitat.setText("Habitat: " + p.habitat);
+            especie.setText("Especie: " + p.especie);
+        }
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -247,22 +255,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
             contador = 150;
         }
         dibujaElPokemonQueEstaEnLaPosicion(contador);
-        try {
-            resultadoConsulta = estado.executeQuery("select * from pokemon where id=" + (contador + 1));
-            if (resultadoConsulta.next()){
-                nombre.setText("Nombre: " + resultadoConsulta.getString(2));
-                num.setText("Nº en la pokedex: " + resultadoConsulta.getString(1));
-                altura.setText("Mide " + resultadoConsulta.getString(3) + " m");
-                peso.setText("Pesa " + resultadoConsulta.getString(4) + "Kg");
-                tipo.setText("Tipo: " + resultadoConsulta.getString(7) + (!"".equals(resultadoConsulta.getString(8)) ? (" / " + resultadoConsulta.getString(8)) : ""));
-                habitat.setText("Habitat: " + resultadoConsulta.getString(6));
-                especie.setText("Especie: " + resultadoConsulta.getString(5));
-            }else{
-                nombre.setText("Este pokemon no figura en la pokedex");
-            }
-        } catch (SQLException ex) {
-                Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        dump(contador + 1);
     }//GEN-LAST:event_derActionPerformed
 
     private void izqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_izqActionPerformed
@@ -271,23 +264,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
             contador = 0;
         }
         dibujaElPokemonQueEstaEnLaPosicion(contador);
-        try {
-            resultadoConsulta = estado.executeQuery("select * from pokemon where id=" + (contador + 1));
-            if (resultadoConsulta.next()){
-                nombre.setText("Nombre: " + resultadoConsulta.getString(2));
-                num.setText("Nº en la pokedex: " + resultadoConsulta.getString(1));
-                altura.setText("Mide " + resultadoConsulta.getString(3) + " m");
-                peso.setText("Pesa " + resultadoConsulta.getString(4) + "Kg");
-                tipo.setText("Tipo: " + resultadoConsulta.getString(7) + (!"".equals(resultadoConsulta.getString(8)) ? (" / " + resultadoConsulta.getString(8)) : ""));
-                habitat.setText("Habitat: " + resultadoConsulta.getString(6));
-                especie.setText("Especie: " + resultadoConsulta.getString(5));
-            }
-            else{
-                nombre.setText("Este pokemon no figura en la pokedex");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        dump(contador + 1);
     }//GEN-LAST:event_izqActionPerformed
 
     /**

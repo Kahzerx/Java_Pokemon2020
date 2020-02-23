@@ -12,7 +12,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -25,15 +24,11 @@ public class VentanaPokedex extends javax.swing.JFrame {
 
     BufferedImage buffer1 = null;
     Image imagen1 = null;
-    int contador = 1;
+    int contador = 0;
     
     Statement estado;
     ResultSet resultadoConsulta;
     Connection conexion;
-    
-    //estructura para guardar todo el contenido de la base de datos
-    //de golpe
-    HashMap<String, Pokemon> listaPokemons = new HashMap();
     
     
     @Override
@@ -69,24 +64,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
                             "root",
                             "");
             estado = conexion.createStatement();
-            resultadoConsulta = estado.executeQuery("Select * from pokemon");
-            //recorremos el array del resultado uno a uno
-            //para ir cargándolo en el Hashmap
-            
-            while (resultadoConsulta.next()){
-                Pokemon p = new Pokemon();
-                p.nombre = resultadoConsulta.getString("nombre");
-                p.especie = resultadoConsulta.getString("especie");
-                p.movimiento1 = resultadoConsulta.getString("movimiento1");
-                p.peso = resultadoConsulta.getString("peso");
-                p.preEvolucion = resultadoConsulta.getInt("preEvolucion");
-                p.posEvolucion = resultadoConsulta.getInt("posEvolucion");
-                
-                //añado el pokemon recien creado al Hashmap
-                listaPokemons.put(resultadoConsulta.getString("id"), p);
-            }
-            
-            
         }
         catch (ClassNotFoundException | SQLException e){
             System.out.println(e.getMessage());
@@ -264,25 +241,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-<<<<<<< HEAD
-    private void izqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_izqActionPerformed
-        dibujaElPokemonQueEstaEnLaPosicion(contador);//porque en el png los pokemon empiezan en el 0
-        Pokemon p = listaPokemons.get(String.valueOf(contador+1));  //y en la BBDD en el 1
-        if (p != null){
-            nombrePokemon.setText(p.nombre);
-        }
-        else{
-            nombrePokemon.setText("NO HAY DATOS");
-        }
-        contador --;
-        if (contador <=0){
-            contador = 0;
-        }
-
-    }//GEN-LAST:event_izqActionPerformed
-
-    private void derActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_derActionPerformed
-=======
     private void derActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_derActionPerformed
         contador ++;
         if (contador >= 150){
@@ -306,7 +264,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
                 Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_derActionPerformed
->>>>>>> master
 
     private void izqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_izqActionPerformed
         contador --;
@@ -314,14 +271,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
             contador = 0;
         }
         dibujaElPokemonQueEstaEnLaPosicion(contador);
-<<<<<<< HEAD
-        Pokemon p = listaPokemons.get(String.valueOf(contador+1));
-        if (p != null){
-            nombrePokemon.setText(p.nombre);
-        }
-        else{
-            nombrePokemon.setText("NO HAY DATOS");
-=======
         try {
             resultadoConsulta = estado.executeQuery("select * from pokemon where id=" + (contador + 1));
             if (resultadoConsulta.next()){
@@ -338,7 +287,6 @@ public class VentanaPokedex extends javax.swing.JFrame {
             }
         } catch (SQLException ex) {
             Logger.getLogger(VentanaPokedex.class.getName()).log(Level.SEVERE, null, ex);
->>>>>>> master
         }
     }//GEN-LAST:event_izqActionPerformed
 

@@ -64,7 +64,7 @@ public class VentanaPokedex extends javax.swing.JFrame {
                             "root",
                             "");
             estado = conexion.createStatement();
-            resultadoConsulta = estado.executeQuery("select * from pokemon where id= 1");
+            
         }
         catch (ClassNotFoundException | SQLException e){
             System.out.println(e.getMessage());
